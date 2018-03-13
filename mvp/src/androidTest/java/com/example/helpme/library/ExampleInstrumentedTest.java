@@ -1,4 +1,4 @@
-package com.example.helpme.mvp;
+package com.example.helpme.library;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

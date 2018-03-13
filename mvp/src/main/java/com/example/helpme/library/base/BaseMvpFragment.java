@@ -1,18 +1,13 @@
-package com.example.helpme.mvp.view;
+package com.example.helpme.library.base;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.support.annotation.NonNull;
 
-import com.example.helpme.mvp.factory.PresenterMvpFactory;
-import com.example.helpme.mvp.factory.PresenterMvpFactoryImpl;
-import com.example.helpme.mvp.presenter.BaseMvpPresenter;
-import com.example.helpme.mvp.proxy.BaseMvpProxy;
-import com.example.helpme.mvp.proxy.PresenterProxyInterface;
+import com.example.helpme.library.mvp.BaseMvpProxy;
+import com.example.helpme.library.mvp.PresenterMvpFactory;
+import com.example.helpme.library.mvp.PresenterMvpFactoryImpl;
+import com.example.helpme.library.mvp.PresenterProxyInterface;
+import com.example.helpme.library.util.AppLogMessageUtils;
 
 
 /**
@@ -20,8 +15,8 @@ import com.example.helpme.mvp.proxy.PresenterProxyInterface;
  * @date 2018/1/23
  * @description 继承Fragment的MvpFragment基类
  */
-public abstract class AbstractMvpFragment<V extends BaseMvpView, P extends BaseMvpPresenter<V>> extends 
-        Fragment implements PresenterProxyInterface<V, P> {
+public abstract class BaseMvpFragment<V extends BaseMvpView, P extends BaseMvpPresenter<V>> extends
+        BaseFragment implements PresenterProxyInterface<V, P> {
     
     /**
      * 调用onSaveInstanceState时存入Bundle的key
@@ -35,59 +30,50 @@ public abstract class AbstractMvpFragment<V extends BaseMvpView, P extends BaseM
     
     protected P mPresenter;
     
-    protected abstract int getLayoutId();
+    /**
+     * 加载数据
+     */
+    protected abstract void onMvpLoadData();
     
-    protected abstract void onInitViewAndData();
-    
-    protected abstract void onAddListener();
-    
-    protected View rootView;
     
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            mProxy.onRestoreInstanceState(savedInstanceState.getBundle(PRESENTER_SAVE_KEY));
-        }
+    protected final void onLoadData() {
+        AppLogMessageUtils.e("perfect-mvp", "V getMvpPresenter");
         mPresenter = mProxy.getMvpPresenter(getContext().getApplicationContext(), (V) this);
-        Log.e("perfect-mvp", "V onCreate");
-        Log.e("perfect-mvp", "V onCreate mProxy = " + mProxy);
-        Log.e("perfect-mvp", "V onCreate this = " + this.hashCode());
+        onMvpLoadData();
     }
     
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable 
-            Bundle savedInstanceState) {
-        if (rootView == null) {
-            rootView = inflater.inflate(getLayoutId(), container, false);
-            onInitViewAndData();
-            onAddListener();
-        }
-        return rootView;
+    protected  void onRestoreInstanceState(@NonNull Bundle savedState) {
+        AppLogMessageUtils.e("perfect-mvp", "V onRestoreInstanceState");
+        mProxy.onRestoreInstanceState(savedState.getBundle(PRESENTER_SAVE_KEY));
     }
     
     @Override
     public void onResume() {
         super.onResume();
+        AppLogMessageUtils.e("perfect-mvp", "V onResume");
         mProxy.onResume();
     }
     
     @Override
     public void onStop() {
         super.onStop();
-        mProxy.onStop();
+        AppLogMessageUtils.e("perfect-mvp", "V onStop");
+        mProxy.onStop(((BaseAppCompatActivity)mContext).isFinishing());
     }
     
     @Override
     public void onDestroy() {
         super.onDestroy();
+        AppLogMessageUtils.e("perfect-mvp", "V onDestroy = ");
         mProxy.onDestroy();
     }
     
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        AppLogMessageUtils.e("perfect-mvp", "V onSaveInstanceState");
         outState.putBundle(PRESENTER_SAVE_KEY, mProxy.onSaveInstanceState());
     }
     
@@ -99,6 +85,7 @@ public abstract class AbstractMvpFragment<V extends BaseMvpView, P extends BaseM
      */
     @Override
     public void setPresenterFactory(PresenterMvpFactory<V, P> presenterFactory) {
+        AppLogMessageUtils.e("perfect-mvp", "V setPresenterFactory");
         mProxy.setPresenterFactory(presenterFactory);
     }
     
@@ -110,9 +97,8 @@ public abstract class AbstractMvpFragment<V extends BaseMvpView, P extends BaseM
      */
     @Override
     public PresenterMvpFactory<V, P> getPresenterFactory() {
+        AppLogMessageUtils.e("perfect-mvp", "V getPresenterFactory");
         return mProxy.getPresenterFactory();
     }
-    
- 
     
 }

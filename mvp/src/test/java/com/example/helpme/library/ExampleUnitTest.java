@@ -1,4 +1,4 @@
-package com.example.helpme.mvp;
+package com.example.helpme.library;
 
 import org.junit.Test;
 

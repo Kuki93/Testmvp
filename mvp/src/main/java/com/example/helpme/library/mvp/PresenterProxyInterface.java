@@ -1,8 +1,7 @@
-package com.example.helpme.mvp.proxy;
+package com.example.helpme.library.mvp;
 
-import com.example.helpme.mvp.factory.PresenterMvpFactory;
-import com.example.helpme.mvp.presenter.BaseMvpPresenter;
-import com.example.helpme.mvp.view.BaseMvpView;
+import com.example.helpme.library.base.BaseMvpPresenter;
+import com.example.helpme.library.base.BaseMvpView;
 
 /**
  * @author helpme

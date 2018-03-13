@@ -1,31 +1,46 @@
 package com.example.helpme.testmvp;
 
-import android.widget.Toast;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
-import com.example.helpme.mvp.factory.CreatePresenter;
-import com.example.helpme.mvp.view.AbstractMvpActivitiy;
+import com.example.helpme.library.base.BaseMvpAppCompatActivity;
+import com.example.helpme.library.mvp.CreatePresenter;
 
-@CreatePresenter(p.class)
-public class MainActivity extends AbstractMvpActivitiy<V,p> implements V {
+import butterknife.BindView;
+
+@CreatePresenter(P.class)
+public class MainActivity extends BaseMvpAppCompatActivity<V, P> implements V {
     
+    @BindView(R.id.text)
+    TextView mTextView;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_main;
     }
     
+    
     @Override
-    protected void onInitViewAndData() {
-    //    mPresenter.pint();
+    protected void onMvpLoadData() {
+        
     }
     
     @Override
     protected void onAddListener() {
-        
+        mTextView.setText("sfasfdsafas");
+    }
+  
+    
+    void click(View v) {
+        //  mPresenter.pint();
+        Log.d("MainActivity", "click" + mPresenter);
+        mPresenter.getData();
     }
     
     
     @Override
-    public void print() {
-        Toast.makeText(this, "222", Toast.LENGTH_LONG).show();
+    public void print(String s) {
+        mTextView.setText(s);
     }
 }

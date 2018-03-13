@@ -1,12 +1,11 @@
-package com.example.helpme.mvp.proxy;
+package com.example.helpme.library.mvp;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.example.helpme.mvp.factory.PresenterMvpFactory;
-import com.example.helpme.mvp.presenter.BaseMvpPresenter;
-import com.example.helpme.mvp.view.BaseMvpView;
+import com.example.helpme.library.base.BaseMvpPresenter;
+import com.example.helpme.library.base.BaseMvpView;
 
 
 /**
@@ -27,7 +26,6 @@ public class BaseMvpProxy<V extends BaseMvpView, P extends BaseMvpPresenter<V>> 
      */
     private PresenterMvpFactory<V, P> mFactory;
     private P mPresenter;
-    private Bundle mBundle;
     
     public BaseMvpProxy(PresenterMvpFactory<V, P> presenterMvpFactory) {
         this.mFactory = presenterMvpFactory;
@@ -65,12 +63,8 @@ public class BaseMvpProxy<V extends BaseMvpView, P extends BaseMvpPresenter<V>> 
      */
     public P getMvpPresenter(Context mContext, V mvpView) {
         Log.e("perfect-mvp", "Proxy getMvpPresenter");
-        if (mFactory != null) {
-            if (mPresenter == null) {
-                mPresenter = mFactory.createMvpPresenter(mContext, mvpView);
-                mPresenter.onCreatePersenter(mBundle == null ? null : mBundle.getBundle
-                        (PRESENTER_KEY));
-            }
+        if (mFactory != null && mPresenter == null) {
+            mPresenter = mFactory.createMvpPresenter(mContext, mvpView);
         }
         Log.e("perfect-mvp", "Proxy getMvpPresenter = " + mPresenter);
         return mPresenter;
@@ -90,9 +84,11 @@ public class BaseMvpProxy<V extends BaseMvpView, P extends BaseMvpPresenter<V>> 
     /**
      * 切换到后台的时候调用
      */
-    public void onStop() {
+    public void onStop(boolean isFinishing) {
         Log.e("perfect-mvp", "Proxy onStop = ");
         if (mPresenter != null) {
+            if (isFinishing)
+                onDetachMvpView();
             mPresenter.onStopPersenter();
         }
     }
@@ -144,6 +140,8 @@ public class BaseMvpProxy<V extends BaseMvpView, P extends BaseMvpPresenter<V>> 
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         Log.e("perfect-mvp", "Proxy onRestoreInstanceState = ");
         Log.e("perfect-mvp", "Proxy onRestoreInstanceState Presenter = " + mPresenter);
-        mBundle = savedInstanceState;
+        mPresenter.onRestoreInstanceState(savedInstanceState == null ? null : savedInstanceState
+                .getBundle
+                (PRESENTER_KEY));
     }
 }
